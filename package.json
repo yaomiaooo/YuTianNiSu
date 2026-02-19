@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+    "build": "tsc && vite build", // 确保构建命令存在
+    "preview": "vite preview",
+    "predeploy": "npm run build", // 部署前自动运行构建
+    "deploy": "gh-pages -d dist"   // 将 dist 目录的内容推送到 gh-pages 分支
+}
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
