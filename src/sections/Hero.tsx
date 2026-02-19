@@ -24,7 +24,7 @@ const Hero = () => {
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'url(/YuTianNiSu/images/hero-bg.jpg)' }}
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}images/hero-bg.jpg')`  }}
       >
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary-bg/40 via-primary-bg/20 to-primary-bg/90" />

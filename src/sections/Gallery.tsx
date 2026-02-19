@@ -8,42 +8,42 @@ const artworks = [
     id: 1,
     title: '大公鸡',
     description: '玉田泥塑最具代表性的作品之一，色彩艳丽，造型生动，寓意吉祥如意。',
-    image: '/YuTianNiSu/images/yutian-rooster.webp',
+    image: 'images/yutian-rooster.webp',
     category: '动物',
   },
   {
     id: 2,
     title: '骑毛驴走娘家',
     description: '吴玉成代表作，入选文化部"中国民间艺术一绝大展"，展现民俗风情。',
-    image: '/YuTianNiSu/images/yutian-figures.jpg',
+    image: 'images/yutian-figures.jpg',
     category: '人物',
   },
   {
     id: 3,
     title: '小狮子滚绣球',
     description: '刘广田代表作，动态造型展现民俗风情，内置苇笛可发出清脆声响。',
-    image: '/YuTianNiSu/images/yutian-tiger.jpg',
+    image: 'images/yutian-tiger.jpg',
     category: '动物',
   },
   {
     id: 4,
     title: '麒麟送子',
     description: '传统吉祥题材，寓意多子多福，色彩层次丰富，仅绿色就分出三种层次。',
-    image: '/YuTianNiSu/images/yutian-family.jpg',
+    image: 'images/yutian-family.jpg',
     category: '神话',
   },
   {
     id: 5,
     title: '泥塑制作工艺',
     description: '艺人正在精心制作泥塑，从取土到成品，每一步都凝聚着匠心。',
-    image: '/YuTianNiSu/images/yutian-making.jpg',
+    image: 'images/yutian-making.jpg',
     category: '工艺',
   },
   {
     id: 6,
     title: '传统泥塑作品',
     description: '玉田泥塑作品色彩鲜艳，千姿百态，融汇于形似、神似之间。',
-    image: '/YuTianNiSu/images/yutian-nisu-1.jpg',
+    image: 'images/yutian-nisu-1.jpg',
     category: '传统',
   },
 ];
@@ -84,7 +84,7 @@ const Gallery = () => {
               >
                 {/* Image */}
                 <img
-                  src={artwork.image}
+                  src={import.meta.env.BASE_URL + artwork.image}
                   alt={artwork.title}
                   className="w-full h-full object-cover transition-transform duration-500 
                            group-hover:scale-110"
@@ -154,7 +154,7 @@ const Gallery = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={selectedImage.image}
+                src={import.meta.env.BASE_URL + selectedImage.image}
                 alt={selectedImage.title}
                 className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
               />
