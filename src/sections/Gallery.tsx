@@ -84,7 +84,7 @@ const Gallery = () => {
               >
                 {/* Image */}
                 <img
-                  src={import.meta.env.BASE_URL + artwork.image}
+                  src={'/YuTianNiSu/' + artwork.image}
                   alt={artwork.title}
                   className="w-full h-full object-cover transition-transform duration-500 
                            group-hover:scale-110"
