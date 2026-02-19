@@ -97,7 +97,7 @@ const Features = () => {
           <div className="mt-16 relative">
             <div className="aspect-[21/9] rounded-xl overflow-hidden">
               <img
-                src="/images/yutian-works.jpg"
+                src="/YuTianNiSu/images/yutian-works.jpg"
                 alt="玉田泥塑作品展示"
                 className="w-full h-full object-cover"
               />
