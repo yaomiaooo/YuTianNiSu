@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/ScrollReveal';
+import { BASE_URL } from '../config';
 
 const Introduction = () => {
   return (
@@ -70,7 +71,7 @@ const Introduction = () => {
             <div className="relative">
               <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-2xl">
                 <img
-                  src={import.meta.env.BASE_URL + 'images/yutian-rooster.webp'}
+                  src={BASE_URL + 'images/yutian-rooster.webp'}
                   alt="玉田泥塑大公鸡"
                   className="w-full h-full object-cover image-hover"
                 />

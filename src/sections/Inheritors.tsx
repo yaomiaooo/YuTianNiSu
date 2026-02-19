@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import ScrollReveal from '../components/ScrollReveal';
 import { Award, Star } from 'lucide-react';
+import { BASE_URL } from '../config';
 
 const inheritors = [
   {
@@ -83,7 +84,7 @@ const Inheritors = () => {
                   {/* Image */}
                   <div className="sm:w-2/5 aspect-square sm:aspect-auto">
                     <img
-                      src={import.meta.env.BASE_URL + inheritor.image}
+                      src={BASE_URL + inheritor.image}
                       alt={inheritor.name}
                       className="w-full h-full object-cover transition-transform duration-500 
                                group-hover:scale-105"

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import ScrollReveal from '../components/ScrollReveal';
 import { Shapes, Palette, Music } from 'lucide-react';
+import { BASE_URL } from '../config';
 
 const features = [
   {
@@ -97,7 +98,7 @@ const Features = () => {
           <div className="mt-16 relative">
             <div className="aspect-[21/9] rounded-xl overflow-hidden">
               <img
-                src={import.meta.env.BASE_URL + "images/yutian-works.jpg"}
+                src={BASE_URL + "images/yutian-works.jpg"}
                 alt="玉田泥塑作品展示"
                 className="w-full h-full object-cover"
               />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ScrollReveal from '../components/ScrollReveal';
 import { X, ZoomIn } from 'lucide-react';
+import { BASE_URL } from '../config';
 
 const artworks = [
   {
@@ -154,7 +155,7 @@ const Gallery = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <img
-                src={import.meta.env.BASE_URL + selectedImage.image}
+                src={BASE_URL + selectedImage.image}
                 alt={selectedImage.title}
                 className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
               />
