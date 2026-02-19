@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build", // 确保构建命令存在
+    "build": "tsc && vite build",
     "preview": "vite preview",
-    "predeploy": "npm run build", // 部署前自动运行构建
-    "deploy": "gh-pages -d dist"   // 将 dist 目录的内容推送到 gh-pages 分支
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist" 
 },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
