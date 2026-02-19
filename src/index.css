@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 50% 10%;
+    --foreground: 0 0% 96%;
+    --card: 0 40% 12%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 40% 12%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 42 45% 60%;
+    --primary-foreground: 0 50% 10%;
+    --secondary: 25 75% 30%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 30% 20%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 45 60% 50%;
+    --accent-foreground: 0 50% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 42 30% 30%;
+    --input: 42 30% 30%;
+    --ring: 42 45% 60%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 40% 8%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 42 45% 60%;
+    --sidebar-primary-foreground: 0 50% 10%;
+    --sidebar-accent: 0 30% 15%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 42 30% 20%;
+    --sidebar-ring: 42 45% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-primary-bg text-text-light font-sans antialiased;
+    line-height: 1.8;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-semibold tracking-wide;
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+  
+  .container-custom {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .text-gold {
+    @apply text-primary-gold;
+  }
+  
+  .bg-gold {
+    @apply bg-primary-gold;
+  }
+  
+  .border-gold {
+    @apply border-primary-gold;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-primary-gold text-primary-bg font-medium rounded 
+           transition-all duration-300 hover:bg-accent-gold hover:shadow-lg;
+  }
+  
+  .btn-outline {
+    @apply px-6 py-3 border-2 border-primary-gold text-primary-gold font-medium rounded 
+           transition-all duration-300 hover:bg-primary-gold hover:text-primary-bg;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+  
+  .image-hover {
+    @apply transition-transform duration-500 hover:scale-105;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-overlay {
+    background: linear-gradient(to bottom, rgba(43, 10, 10, 0.3), rgba(43, 10, 10, 0.8));
+  }
+  
+  .gold-gradient {
+    background: linear-gradient(135deg, #c9a86c 0%, #d4af37 50%, #c9a86c 100%);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2b0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c9a86c;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
