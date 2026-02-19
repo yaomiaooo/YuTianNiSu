@@ -12,7 +12,7 @@ const inheritors = [
     description: '从小随父亲吴乐庭学艺，后师从邻村戴家屯刘俊祥学习泥玩具制作工艺。其泥塑注重表现自然和社会生活，题材花样出新，造型和着色古朴典雅，散发着浓郁的乡土气息。',
     achievement: '代表作《骑毛驴走娘家》入选文化部"中国民间艺术一绝大展"',
     honor: '国家级传承人',
-    image: '/images/yutian-craftsman.jpg',
+    image: '/YuTianNiSu/images/yutian-craftsman.jpg',
   },
   {
     name: '刘广田',
@@ -23,7 +23,7 @@ const inheritors = [
     description: '创新"分层套模"工艺，使复杂造型的泥塑生产效率提高3倍。将年画色彩与泥塑造型完美结合，创造出反映新生活的作品。',
     achievement: '设计的《十二生肖》邮票成为中国邮政首套泥塑主题邮品',
     honor: '工艺创新奖',
-    image: '/images/yutian-process.jpg',
+    image: '/YuTianNiSu/images/yutian-process.jpg',
   },
   {
     name: '王振锋',
@@ -33,7 +33,7 @@ const inheritors = [
     description: '致力于泥塑进校园、社区推广，积极推介玉田泥塑。免费开放展馆，大力开展来馆体验活动，组织开展进社区、进校园、大学生研习等活动。',
     achievement: '与传承人一起提炼出玉田泥塑"艳、拙、活、趣、繁、广"六大特点',
     honor: '市级传承人',
-    image: '/images/yutian-making.jpg',
+    image: '/YuTianNiSu/images/yutian-making.jpg',
   },
   {
     name: '杨晓梅 / 魏艳华',
@@ -43,7 +43,7 @@ const inheritors = [
     description: '在题材、技艺上都有所创新，既继承了传统艺术风格，又具有浓厚的现代生活气息。已自主研发玉田泥人产品300多种，涉及神话传说、戏曲、历史人物等各个方面。',
     achievement: '《双林寺塔》被北京紫竹院永久收藏，24件作品被天津市文化馆永久收藏',
     honor: '唐山市巧女',
-    image: '/images/yutian-works.jpg',
+    image: '/YuTianNiSu/images/yutian-works.jpg',
   },
 ];
 

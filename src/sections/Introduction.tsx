@@ -70,7 +70,7 @@ const Introduction = () => {
             <div className="relative">
               <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-2xl">
                 <img
-                  src="/images/yutian-rooster.webp"
+                  src="/YuTianNiSu/images/yutian-rooster.webp"
                   alt="玉田泥塑大公鸡"
                   className="w-full h-full object-cover image-hover"
                 />
