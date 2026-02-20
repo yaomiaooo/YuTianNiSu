@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
@@ -13,10 +13,22 @@ const MusicPlayer = () => {
   const [autoPlayAttempted, setAutoPlayAttempted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const playerRef = useRef<HTMLDivElement>(null);
 
   const musicFile = './bgm/bg-miusic.mp3';
   const songName = '倒垂帘';
   const artist = '徐红';
+
+  // 检测点击是否在播放器外部的回调函数
+  const handleClickOutside = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!isMobile || !isExpanded) return;
+    
+    const target = e.target as Node;
+    // 使用 ref 而不是 querySelector 来检查点击位置
+    if (playerRef.current && !playerRef.current.contains(target)) {
+      setIsExpanded(false);
+    }
+  }, [isMobile, isExpanded]);
 
   useEffect(() => {
     // 检测是否为移动设备
@@ -34,26 +46,6 @@ const MusicPlayer = () => {
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
-
-    // 移动端点击外部收起面板
-    const handleDocumentClick = (e: MouseEvent) => {
-      if (isMobile && isExpanded) {
-        const playerElement = document.querySelector('[data-music-player]');
-        if (playerElement && !playerElement.contains(e.target as Node)) {
-          setIsExpanded(false);
-        }
-      }
-    };
-
-    // 移动端触摸外部收起面板
-    const handleDocumentTouch = (e: TouchEvent) => {
-      if (isMobile && isExpanded) {
-        const playerElement = document.querySelector('[data-music-player]');
-        if (playerElement && !playerElement.contains(e.target as Node)) {
-          setIsExpanded(false);
-        }
-      }
-    };
 
     // 智能自动播放策略
     const attemptAutoPlay = async () => {
@@ -106,17 +98,29 @@ const MusicPlayer = () => {
     };
     
     document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('click', handleDocumentClick);
-    document.addEventListener('touchstart', handleDocumentTouch);
 
     return () => {
       clearTimeout(timer);
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
-      document.removeEventListener('click', handleDocumentClick);
-      document.removeEventListener('touchstart', handleDocumentTouch);
+      document.removeEventListener('click', handleUserInteraction);
     };
-  }, [isMobile, isExpanded]);
+  }, [autoPlayAttempted, hasUserInteracted, isPlaying]);
+
+  // 单独处理点击外部的事件监听，确保依赖项正确
+  useEffect(() => {
+    // 只有在移动端且展开状态下才添加监听器
+    if (!isMobile || !isExpanded) return;
+
+    // 使用捕获阶段监听，确保能捕获到所有点击
+    document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener('touchstart', handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener('touchstart', handleClickOutside, true);
+    };
+  }, [isMobile, isExpanded, handleClickOutside]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -138,7 +142,10 @@ const MusicPlayer = () => {
     }
   }, [volume]);
 
-  const togglePlay = () => {
+  const togglePlay = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    // 阻止事件冒泡，防止触发外部点击
+    e?.stopPropagation();
+    
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -167,31 +174,30 @@ const MusicPlayer = () => {
         setIsPlaying(true);
       }
     }
-  };
+  }, [isPlaying, hasUserInteracted]);
 
-  const handleToggleExpand = () => {
-    if (isMobile) {
-      setIsExpanded(!isExpanded);
-    }
-  };
-
-  const handleTouchOutside = (e: React.TouchEvent) => {
-    // 阻止事件冒泡，避免触发父元素的点击事件
+  const handleToggleExpand = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    // 阻止事件冒泡
     e.stopPropagation();
-  };
+    
+    if (isMobile) {
+      setIsExpanded(prev => !prev);
+    }
+  }, [isMobile]);
 
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const newTime = parseFloat(e.target.value);
     audio.currentTime = newTime;
     setCurrentTime(newTime);
-  };
+  }, []);
 
-  const toggleMute = () => {
-    setVolume(volume > 0 ? 0 : 0.5);
-  };
+  const toggleMute = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
+    setVolume(prev => prev > 0 ? 0 : 0.5);
+  }, []);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -208,18 +214,11 @@ const MusicPlayer = () => {
       <audio ref={audioRef} src={musicFile} loop />
       
       <motion.div
+        ref={playerRef}
         data-music-player="true"
         className="fixed bottom-6 left-6 z-50"
         onMouseEnter={() => !isMobile && setIsHovered(true)}
         onMouseLeave={() => !isMobile && setIsHovered(false)}
-        onClick={() => {
-          if (!hasUserInteracted) {
-            togglePlay();
-          }
-          if (isMobile) {
-            handleToggleExpand();
-          }
-        }}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ 
           scale: shouldShowExpanded ? 1 : 0.8, 
@@ -232,6 +231,7 @@ const MusicPlayer = () => {
           className={`bg-gradient-to-br from-[#3a1a12] to-[#1a0a06] rounded-xl shadow-2xl border border-[#d4af37]/30 backdrop-blur-md ${
             shouldShowExpanded ? 'p-3 w-72 h-16' : 'p-3 w-14 h-14 rounded-full'
           } transition-all duration-300 overflow-hidden`}
+          onClick={handleToggleExpand}
         >
           {/* 缩小状态 - 圆形播放按钮 */}
           <AnimatePresence>
@@ -268,6 +268,7 @@ const MusicPlayer = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 className="flex items-center h-full px-1"
+                onClick={(e) => e.stopPropagation()} // 阻止内部点击冒泡到外层
               >
                 {/* 播放按钮（居中突出） */}
                 <div className="mr-3">
@@ -292,13 +293,12 @@ const MusicPlayer = () => {
                   {/* 歌曲信息 */}
                   <div className="flex justify-between items-center mb-1">
                     <div>
-                      <p className="text-sm font-medium text-[#d4af37]" onTouchStart={handleTouchOutside}>{songName}</p>
-                      <p className="text-xs text-[#b8946f]" onTouchStart={handleTouchOutside}>{artist}</p>
+                      <p className="text-sm font-medium text-[#d4af37]">{songName}</p>
+                      <p className="text-xs text-[#b8946f]">{artist}</p>
                     </div>
                     <button
                       onClick={toggleMute}
-                      className="text-[#b8946f] hover:text-[#d4af37] transition-colors"
-                      onTouchStart={handleTouchOutside}
+                      className="text-[#b8946f] hover:text-[#d4af37] transition-colors p-1"
                     >
                       {volume > 0 ? <Volume2 size={12} /> : <VolumeX size={12} />}
                     </button>
@@ -312,10 +312,10 @@ const MusicPlayer = () => {
                       max={duration || 0}
                       value={currentTime}
                       onChange={handleTimeChange}
+                      onClick={(e) => e.stopPropagation()} // 阻止进度条点击冒泡
                       className="flex-1 h-1 bg-[#5a2a1f] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-2 [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#d4af37]"
-                      onTouchStart={handleTouchOutside}
                     />
-                    <span className="text-xs text-[#b8946f] w-12 text-right" onTouchStart={handleTouchOutside}>
+                    <span className="text-xs text-[#b8946f] w-12 text-right">
                       {formatTime(currentTime)}/{formatTime(duration)}
                     </span>
                   </div>
