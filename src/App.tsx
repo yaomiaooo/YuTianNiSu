@@ -1,4 +1,5 @@
 import Navbar from './components/Navbar';
+import MusicPlayer from './components/MusicPlayer';
 import Hero from './sections/Hero';
 import Introduction from './sections/Introduction';
 import History from './sections/History';
@@ -24,6 +25,7 @@ function App() {
         <Protection />
       </main>
       <Footer />
+      <MusicPlayer />
     </div>
   );
 }
