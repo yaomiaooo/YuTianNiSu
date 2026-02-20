@@ -5,11 +5,13 @@ import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 const MusicPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [autoPlayAttempted, setAutoPlayAttempted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const musicFile = './bgm/bg-miusic.mp3';
@@ -17,6 +19,13 @@ const MusicPlayer = () => {
   const artist = '徐红';
 
   useEffect(() => {
+    // 检测是否为移动设备
+    const checkIsMobile = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
+    
+    setIsMobile(checkIsMobile());
+
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -25,6 +34,26 @@ const MusicPlayer = () => {
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
+
+    // 移动端点击外部收起面板
+    const handleDocumentClick = (e: MouseEvent) => {
+      if (isMobile && isExpanded) {
+        const playerElement = document.querySelector('[data-music-player]');
+        if (playerElement && !playerElement.contains(e.target as Node)) {
+          setIsExpanded(false);
+        }
+      }
+    };
+
+    // 移动端触摸外部收起面板
+    const handleDocumentTouch = (e: TouchEvent) => {
+      if (isMobile && isExpanded) {
+        const playerElement = document.querySelector('[data-music-player]');
+        if (playerElement && !playerElement.contains(e.target as Node)) {
+          setIsExpanded(false);
+        }
+      }
+    };
 
     // 智能自动播放策略
     const attemptAutoPlay = async () => {
@@ -77,13 +106,17 @@ const MusicPlayer = () => {
     };
     
     document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener('touchstart', handleDocumentTouch);
 
     return () => {
       clearTimeout(timer);
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
+      document.removeEventListener('click', handleDocumentClick);
+      document.removeEventListener('touchstart', handleDocumentTouch);
     };
-  }, []);
+  }, [isMobile, isExpanded]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -136,6 +169,17 @@ const MusicPlayer = () => {
     }
   };
 
+  const handleToggleExpand = () => {
+    if (isMobile) {
+      setIsExpanded(!isExpanded);
+    }
+  };
+
+  const handleTouchOutside = (e: React.TouchEvent) => {
+    // 阻止事件冒泡，避免触发父元素的点击事件
+    e.stopPropagation();
+  };
+
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -155,18 +199,30 @@ const MusicPlayer = () => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // 根据设备类型决定是否显示展开状态
+  const shouldShowExpanded = isMobile ? isExpanded : isHovered;
+  const shouldShowCollapsed = isMobile ? !isExpanded : !isHovered;
+
   return (
     <>
       <audio ref={audioRef} src={musicFile} loop />
       
       <motion.div
+        data-music-player="true"
         className="fixed bottom-6 left-6 z-50"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => !hasUserInteracted && togglePlay()}
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => !isMobile && setIsHovered(false)}
+        onClick={() => {
+          if (!hasUserInteracted) {
+            togglePlay();
+          }
+          if (isMobile) {
+            handleToggleExpand();
+          }
+        }}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ 
-          scale: isHovered ? 1 : 0.8, 
+          scale: shouldShowExpanded ? 1 : 0.8, 
           opacity: 1 
         }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -174,12 +230,12 @@ const MusicPlayer = () => {
         {/* 简约红棕复古样式 */}
         <motion.div
           className={`bg-gradient-to-br from-[#3a1a12] to-[#1a0a06] rounded-xl shadow-2xl border border-[#d4af37]/30 backdrop-blur-md ${
-            isHovered ? 'p-3 w-72 h-16' : 'p-3 w-14 h-14 rounded-full'
+            shouldShowExpanded ? 'p-3 w-72 h-16' : 'p-3 w-14 h-14 rounded-full'
           } transition-all duration-300 overflow-hidden`}
         >
           {/* 缩小状态 - 圆形播放按钮 */}
           <AnimatePresence>
-            {!isHovered && (
+            {shouldShowCollapsed && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -206,7 +262,7 @@ const MusicPlayer = () => {
 
           {/* 展开状态 - 简约复古播放器 */}
           <AnimatePresence>
-            {isHovered && (
+            {shouldShowExpanded && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -236,12 +292,13 @@ const MusicPlayer = () => {
                   {/* 歌曲信息 */}
                   <div className="flex justify-between items-center mb-1">
                     <div>
-                      <p className="text-sm font-medium text-[#d4af37]">{songName}</p>
-                      <p className="text-xs text-[#b8946f]">{artist}</p>
+                      <p className="text-sm font-medium text-[#d4af37]" onTouchStart={handleTouchOutside}>{songName}</p>
+                      <p className="text-xs text-[#b8946f]" onTouchStart={handleTouchOutside}>{artist}</p>
                     </div>
                     <button
                       onClick={toggleMute}
                       className="text-[#b8946f] hover:text-[#d4af37] transition-colors"
+                      onTouchStart={handleTouchOutside}
                     >
                       {volume > 0 ? <Volume2 size={12} /> : <VolumeX size={12} />}
                     </button>
@@ -256,8 +313,9 @@ const MusicPlayer = () => {
                       value={currentTime}
                       onChange={handleTimeChange}
                       className="flex-1 h-1 bg-[#5a2a1f] rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-2 [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#d4af37]"
+                      onTouchStart={handleTouchOutside}
                     />
-                    <span className="text-xs text-[#b8946f] w-12 text-right">
+                    <span className="text-xs text-[#b8946f] w-12 text-right" onTouchStart={handleTouchOutside}>
                       {formatTime(currentTime)}/{formatTime(duration)}
                     </span>
                   </div>
